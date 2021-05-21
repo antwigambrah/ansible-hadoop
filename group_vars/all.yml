@@ -1,0 +1,14 @@
+hadoop_user:  "hduser"
+hadoop_group: "hduser"
+hadoop_user_password: "bingo"
+hosts:  [
+  {
+    "namenode": "10.243.87.219" 
+  },
+  {
+    "datanode1": "10.243.87.66" 
+  },
+  {
+    "datanode2": "10.243.87.248"
+  }
+]

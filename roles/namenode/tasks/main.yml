@@ -1,0 +1,27 @@
+
+- name: Fetch namenode remote id_rsa file
+  become: yes
+  become_user: "{{hadoop_user}}"
+  fetch:
+    src: /home/hduser/.ssh/id_rsa.pub
+    dest: /tmp/id_rsa.pub
+    flat: yes
+
+- name: Download  hadoop tar file
+  become: yes
+  become_user: "{{hadoop_user}}"
+  get_url:
+    url: https://archive.apache.org/dist/hadoop/common/hadoop-3.2.2/hadoop-3.2.2.tar.gz
+    dest: /home/hduser
+
+# - name: Extract hadoop tar file
+#   become: yes
+#   become_user: "{{hadoop_user}}"
+#   unarchive:
+#     src: /home/hduser/hadoop-3.2.2.tar.gz
+#     dest: /home/hduser
+
+# - name: Rename hadoop default tar file name to "hadoop"
+#   become: yes
+#   become_user: "{{hadoop_user}}"
+#   shell:  mv /home/hduser/hadoop-3.2.2 /home/hduser/hadoop

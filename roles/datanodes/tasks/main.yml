@@ -1,0 +1,9 @@
+- name: Transfer namenode id_rsa to all datanodes
+  become: yes
+  become_user: "{{hadoop_user}}"  
+  copy: src=/tmp/id_rsa.pub dest=/home/hduser
+
+- name: Enable namenode access to datanodes
+  become: yes
+  become_user: "{{hadoop_user}}"
+  shell:  nohup cat ~/id_rsa.pub >> ~/.ssh/authorized_keys

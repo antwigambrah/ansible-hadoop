@@ -1,0 +1,21 @@
+---
+- hosts: [hadoop]
+  gather_facts: yes
+  become: yes
+  remote_user: ubuntu
+  roles:
+    - setup
+
+- hosts: [namenode]
+  gather_facts: yes
+  become: yes
+  remote_user: ubuntu
+  roles:
+    - namenode
+
+- hosts: [datanodes]
+  gather_facts: yes
+  become: yes
+  remote_user: ubuntu
+  roles:
+    - datanodes

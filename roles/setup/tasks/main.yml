@@ -1,0 +1,53 @@
+- name: Install jdk 8 for
+  package:
+    name: openjdk-8-jdk
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+
+
+
+- name: Create hadoop group
+  group:  name={{ hadoop_group }} state=present
+
+# - name: Remove hadoop user
+#   become: yes
+#   user:
+#     name: "{{hadoop_user}}"
+#     state:  absent
+#     remove: yes
+
+- name: Create hadoop user
+  user:
+    name: "{{ hadoop_user }}"
+    password: "{{ hadoop_user_password | password_hash('sha512')}}"
+    state:  present
+    group:  "{{hadoop_group}}"
+    shell:  /bin/bash
+    remove: yes
+    system: no
+
+- name: Add ip and hostname to each node /etc/hosts
+  become: yes
+  become_user:  root
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ item.key }} {{ item.value }}"
+  with_dict:  "{{ hosts }}"
+
+- name: Enable Passwordless SSH for Hadoop User
+  become: yes
+  become_user: "{{hadoop_user}}"
+  shell:  nohup yes | ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
+
+  
+# - name: Add key to authorized_keys
+#   become: yes
+#   become_user: "{{hadoop_user}}"
+#   shell:  cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+
+
+# - name: Set the permissions for your user with the chmod command
+#   become: yes
+#   become_user: "{{hadoop_user}}"
+#   shell:  cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
