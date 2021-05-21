@@ -16,7 +16,8 @@ Paste this inside the hosts and change ansible_user to the users on each host ma
 10.243.87.248   ansible_connection=ssh ansible_user=ubuntu
 10.243.87.66    ansible_connection=ssh ansible_user=ubuntu
 
-
+4. nsible -m ping all   n.b this checks that the host can connect to all the nodes
 5. Go to the group_vars folder and change the ips and make sure it corresponds with the above
 6. Unfortunately you need to ssh-copy-id from namenode to each datanode N:B will be automated later
 7. This will set the system up for us to install hadoop N:B Automation ongoing . I will notify you when done
+9. ansible-playbook playbook.yml
