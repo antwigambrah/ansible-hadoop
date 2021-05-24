@@ -7,3 +7,4 @@
   become: yes
   become_user: "{{hadoop_user}}"
   shell:  nohup cat ~/id_rsa.pub >> ~/.ssh/authorized_keys
+  

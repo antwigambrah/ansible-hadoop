@@ -13,9 +13,9 @@
   roles:
     - namenode
 
-- hosts: [datanodes]
-  gather_facts: yes
-  become: yes
-  remote_user: ubuntu
-  roles:
-    - datanodes
+# - hosts: [datanodes]
+#   gather_facts: yes
+#   become: yes
+#   remote_user: ubuntu
+#   roles:
+#     - datanodes

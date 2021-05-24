@@ -40,7 +40,27 @@
   become_user: "{{hadoop_user}}"
   shell:  nohup yes | ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
 
-  
+
+- name: Download  hadoop tar file
+  become: yes
+  become_user: "{{hadoop_user}}"
+  get_url:
+    url: https://archive.apache.org/dist/hadoop/common/hadoop-3.2.2/hadoop-3.2.2.tar.gz
+    dest: /home/hduser
+
+- name: Extract hadoop tar file
+  become: yes
+  become_user: "{{hadoop_user}}"
+  unarchive:
+    src: /home/hduser/hadoop-3.2.2.tar.gz
+    dest: /home/hduser
+    remote_src: yes
+
+- name: Rename hadoop default tar file name to "hadoop"
+  become: yes
+  become_user: "{{hadoop_user}}"
+  shell:  mv /home/hduser/hadoop-3.2.2 /home/hduser/hadoop
+
 # - name: Add key to authorized_keys
 #   become: yes
 #   become_user: "{{hadoop_user}}"

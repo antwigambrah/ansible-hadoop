@@ -1,6 +1,13 @@
 hadoop_user:  "hduser"
 hadoop_group: "hduser"
 hadoop_user_password: "bingo"
+hadoop_java_home: "/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java"
+hadoop_namenode_endpoint: "hdfs://namenode:9000"
+hadoop_namenode_directory:  "/home/hduser/hadoop/data/nameNode"
+hadoop_datanode_directory:  "/home/hduser/hadoop/data/dataNode"
+hadoop_data_replication:  "1"
+mapreduce_default_framework: "yarn"
+yarn_resourcemanager_hostname: "10.243.87.219"
 hosts:  [
   {
     "namenode": "10.243.87.219" 

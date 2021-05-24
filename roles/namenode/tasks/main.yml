@@ -3,25 +3,82 @@
   become: yes
   become_user: "{{hadoop_user}}"
   fetch:
-    src: /home/hduser/.ssh/id_rsa.pub
+    src: /home/hduser/. ssh/id_rsa.pub
     dest: /tmp/id_rsa.pub
     flat: yes
 
-- name: Download  hadoop tar file
+- name:   Add Hadoop binaries to your PATH. Edit /home/{{hadoop_user}}/.profile 
   become: yes
-  become_user: "{{hadoop_user}}"
-  get_url:
-    url: https://archive.apache.org/dist/hadoop/common/hadoop-3.2.2/hadoop-3.2.2.tar.gz
-    dest: /home/hduser
+  become_user:  "{{hadoop_user}}"
+  lineinfile:
+    path: /home/hduser/.profile
+    line: "PATH=/home/{{hadoop_user}}/hadoop/bin:/home/{{hadoop_user}}/hadoop/sbin:$PATH"
 
-# - name: Extract hadoop tar file
-#   become: yes
-#   become_user: "{{hadoop_user}}"
-#   unarchive:
-#     src: /home/hduser/hadoop-3.2.2.tar.gz
-#     dest: /home/hduser
+- name:   Add Hadoop to  PATH for the shell. Edit .bashrc and add the following lines
+  become: yes
+  become_user:  "{{hadoop_user}}"
+  lineinfile:
+    path: /home/hduser/.bashrc
+    line: "PATH=/home/{{hadoop_user}}/hadoop/bin:/home/{{hadoop_user}}/hadoop/sbin:$PATH"
+  loop:
+    - export HADOOP_HOME=/home/hduser/hadoop
+    - export PATH=${PATH}:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin
 
-# - name: Rename hadoop default tar file name to "hadoop"
-#   become: yes
-#   become_user: "{{hadoop_user}}"
-#   shell:  mv /home/hduser/hadoop-3.2.2 /home/hduser/hadoop
+# - name: Set Java Home
+#   ansible.builtin.template:
+#     src:  hadoop-env.sh.j2
+#     dest: "/home/{{hadoop_user}}/hadoop/etc/hadoop/hadoop-env.sh"
+#     owner: "{{hadoop_user}}"
+#     group: "{{hadoop_group}}"
+#     mode: '0644'
+
+- name: Set NameNode Location
+  ansible.builtin.template:
+    src:  core-site.xml.j2
+    dest: "/home/{{hadoop_user}}/hadoop/etc/hadoop/core-site.xml"
+    owner: "{{hadoop_user}}"
+    group: "{{hadoop_group}}"
+    mode: '0644'
+
+- name: Set path for HDFS
+  ansible.builtin.template:
+    src:  hdfs-site.xml.j2
+    dest: "/home/{{hadoop_user}}/hadoop/etc/hadoop/hdfs-site.xml"
+    owner: "{{hadoop_user}}"
+    group: "{{hadoop_group}}"
+    mode: '0644'
+
+- name: Set Job Scheduler
+  ansible.builtin.template:
+    src:  mapred-site.xml.j2
+    dest: "/home/{{hadoop_user}}/hadoop/etc/hadoop/mapred-site.xml"
+    owner: "{{hadoop_user}}"
+    group: "{{hadoop_group}}"
+    mode: '0644'
+
+# //set check to determine the job scheduler
+
+- name: Configure YARN
+  ansible.builtin.template:
+    src:  yarn-site.xml.j2
+    dest: "/home/{{hadoop_user}}/hadoop/etc/hadoop/yarn-site.xml"
+    owner: "{{hadoop_user}}"
+    group: "{{hadoop_group}}"
+    mode: '0644'
+
+
+- name: Configure Workers
+  ansible.builtin.template:
+    src:  workers.j2
+    dest: "/home/{{hadoop_user}}/hadoop/etc/hadoop/workers"
+    owner: "{{hadoop_user}}"
+    group: "{{hadoop_group}}"
+    mode: '0644'
+
+
+
+- name: Add ip and hostname to each node /etc/hosts
+  become: yes
+  become_user:  root
+  shell: "scp /home/{{hadoop_user}}/hadoop/etc/hadoop/* {{hadoop_user}}@{{item.key}}:/home/hduser/hadoop/hadoop/etc/hadoop/"
+  with_dict:  "{{ hosts }}"
